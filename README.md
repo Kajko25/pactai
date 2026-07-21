@@ -24,6 +24,18 @@ So PactAI adds:
 - A **reputation ledger** so requester agents can weigh price against an
   executor's track record before committing budget.
 
+## Flagship demo task: SlotScout
+
+Agents hunt scarce appointment slots (passport office, medical specialists,
+exams) that appear at unpredictable times and vanish in minutes. The
+requester agent pays **only on verified capture** — the executor's claim is
+re-fetched from the slot source (the oracle) and its canonical hash must
+match what was committed on-chain. If no slot appears before the deadline,
+the escrow **refunds automatically** and the hunter's reputation takes the
+hit. The task was chosen because the result may legitimately never arrive:
+that makes the refund path a first-class part of the demo instead of dead
+code, and it's exactly the case pay-per-response (x402) cannot cover.
+
 ## Components
 
 | Component | What it does |
@@ -32,7 +44,8 @@ So PactAI adds:
 | `agents/executor-agent` | Watches the job board, quotes jobs it can do, does the work, submits the result to escrow. Also built on Claude Agent SDK + Circle Agent Stack tools. |
 | `contracts/JobEscrow.sol` | Holds USDC per job, releases on requester approval, refunds on timeout. Deployed to Arc Testnet. |
 | `services/job-board` | Minimal shared API both agents call to post/discover jobs and job state (open → quoted → funded → delivered → released/refunded). |
-| `packages/shared` | Job/quote/reputation types shared across agents and the job board. |
+| `services/slot-source` | Mock appointment-slot source ("the agency website") — the external signal hunters poll, and the oracle deliveries are verified against. Replaced by a real scraper/booking API in production. |
+| `packages/shared` | Job/quote/reputation/slot types, canonical-JSON claim hashing, and the viem escrow client shared by both agents. |
 
 ## Stack
 
@@ -46,6 +59,25 @@ So PactAI adds:
 - Solidity escrow contract + Circle Contracts for deployment
 - Bun workspaces, TypeScript
 
+## Local development
+
+```bash
+bun install
+forge build --root contracts     # compile contracts + artifacts
+forge test  --root contracts     # 21 escrow unit tests
+bun run e2e                      # full local cycle on anvil, no API key needed:
+                                 # release path AND timeout-refund path
+```
+
+`bun run e2e` spawns anvil, deploys MockUSDC + JobEscrow, starts the
+job-board and slot-source, and drives the exact same lib.ts logic the
+Claude Agent SDK tools wrap — a green run proves the whole protocol before
+anything touches Arc Testnet. Running the actual LLM-driven agents
+(`bun run requester` / `bun run executor`) additionally needs
+`ANTHROPIC_API_KEY` and the env from `agents/*/.env.example`.
+
 ## Status
 
 Hackathon in progress. See `docs/PLAN.md` for the checkpoint plan.
+Contracts unit-tested (21/21) and the full job cycle is proven locally on
+anvil (both release and timeout-refund paths). Next: Arc Testnet deploy.

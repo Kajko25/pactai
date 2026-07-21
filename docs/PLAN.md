@@ -15,16 +15,27 @@ All deadlines AoE (UTC-12). Submit early — late finals aren't judged.
 
 ## Week 1 (now → Checkpoint 2, 26 Jul)
 
-- [ ] Confirm Arc Testnet RPC, USDC address, faucet, block explorer
-- [ ] Circle CLI installed + logged in, agent wallet created + funded on Arc Testnet
+- [x] Confirm Arc Testnet RPC, USDC address, faucet, block explorer
+      (2026-07-21, via docs.arc.io: RPC `https://rpc.testnet.arc.network`,
+      chainId `5042002`, USDC `0x3600000000000000000000000000000000000000`
+      (6-decimal ERC-20 view of native USDC), explorer
+      `https://testnet.arcscan.app`, faucet `https://faucet.circle.com`)
+- [x] Circle CLI installed + logged in (agent wallet exists on ARC-TESTNET;
+      per-agent wallets for the demo are a Week 2 item)
 - [ ] Run the reference `claude-agent-sdk` starter kit end-to-end once, to
       confirm the wallet/x402/nanopayment flow works before building on it
-- [ ] `packages/shared`: Job/Quote/Reputation types
-- [ ] `services/job-board`: minimal in-memory (or SQLite) API — post job,
-      list jobs, post quote, mark delivered
-- [ ] `contracts/JobEscrow.sol`: fund/submitResult/release/refund, unit
-      tested locally (Hardhat/Foundry) against a local chain before touching
-      Arc Testnet
+- [x] Flagship demo task chosen: **SlotScout** (slot hunting) — see
+      ARCHITECTURE.md; refund-on-timeout is a first-class demo path
+- [x] `packages/shared`: Job/Quote/Reputation + Slot/SlotClaim types,
+      canonical-JSON claim hashing, viem escrow client
+- [x] `services/job-board`: in-memory Hono API with zod-validated inputs;
+      plus `services/slot-source` (mock signal + verification oracle)
+- [x] `contracts/JobEscrow.sol`: Foundry project, 21/21 unit tests against
+      a 6-decimal MockUSDC (fund/submitResult/release, both refund paths,
+      permission + wrong-state reverts)
+- [x] Full local cycle proven on anvil (`bun run e2e`): post → quote →
+      score → fund → slot appears → claim → deliver (board + chain) →
+      verify vs oracle → release; AND fund → no slot → deadline → refund
 - [ ] Progress summary + repo link submitted at Checkpoint 2 (does not need
       to be complete — a placeholder/WIP is fine per the rules)
 

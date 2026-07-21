@@ -9,9 +9,14 @@
   "scripts": {
     "requester": "bun run --cwd agents/requester-agent demo",
     "executor": "bun run --cwd agents/executor-agent demo",
-    "job-board": "bun run --cwd services/job-board dev"
+    "job-board": "bun run --cwd services/job-board dev",
+    "e2e": "bun run scripts/e2e-local.ts",
+    "slot-source": "bun run --cwd services/slot-source dev"
   },
   "devDependencies": {
-    "typescript": "^5.6.0"
+    "@pactai/shared": "workspace:*",
+    "bun-types": "^1.3.14",
+    "typescript": "^5.6.0",
+    "viem": "^2.55.4"
   }
 }

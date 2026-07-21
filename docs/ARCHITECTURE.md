@@ -1,5 +1,18 @@
 # PactAI architecture
 
+## Flagship task instantiation: SlotScout
+
+The protocol below is task-agnostic; the MVP instantiates it with exactly one
+task type (per the cut list): **slot hunting**. `Job.spec` carries a JSON
+`SlotTask` (`{type: "slot-hunt", facility, notAfter}`), the executor polls
+`services/slot-source` for appearing slots, and the deliverable is a
+`SlotClaim` issued by the slot source when the hunter captures one. The slot
+source doubles as the **verification oracle**: the requester re-fetches the
+claim by id (never trusting executor-supplied bytes), checks
+`keccak256(canonicalJson(claim))` against both the job-board result and the
+on-chain `resultHash`, and only then releases. No slot before the deadline →
+the escrow's timeout refund is the designed outcome, not an error path.
+
 ## Flow
 
 1. **Post job.** Requester agent posts a job to the job board: task spec,
@@ -57,16 +70,22 @@ State machine: `Funded -> Delivered -> Released` or `Funded -> Refunded` /
 ```
 pactai/
 ├── agents/
-│   ├── requester-agent/     Claude Agent SDK app, in-process MCP tools for
-│   │                        job-board + escrow + circle-tools
-│   └── executor-agent/      same shape, opposite role
+│   ├── requester-agent/     src/lib.ts = protocol logic (post/score/fund/
+│   │                        verify/release/refund), src/index.ts = Claude
+│   │                        Agent SDK wiring with canUseTool spend gate
+│   └── executor-agent/      same shape, opposite role (quote/hunt/deliver)
 ├── contracts/
-│   └── JobEscrow.sol
+│   ├── src/JobEscrow.sol    Foundry project; 21 unit tests in test/
+│   └── script/              DeployJobEscrow.s.sol (USDC_ADDRESS env)
 ├── services/
-│   └── job-board/           minimal Express/Hono API: POST /jobs, POST
-│                             /jobs/:id/quotes, GET /jobs, reputation store
+│   ├── job-board/           Hono API: jobs, quotes, results, reputation
+│   └── slot-source/         mock agency: slots appear, get claimed, and
+│                             claims are re-fetchable (the oracle)
 ├── packages/
-│   └── shared/               Job/Quote/Reputation types + zod schemas
+│   └── shared/               types + zod schemas, canonical-JSON claim
+│                             hashing, viem escrow client (anvil ⇄ Arc)
+├── scripts/
+│   └── e2e-local.ts          full-cycle proof on anvil, no LLM required
 └── docs/
     ├── ARCHITECTURE.md
     └── PLAN.md
