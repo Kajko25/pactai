@@ -11,8 +11,9 @@
       "deployer": "0x6D4843155412832dC3Fa9C59e593cdAfdf52639D",
       "constructorArgs": {
         "usdcAddress": "0x3600000000000000000000000000000000000000"
-      }
+      },
+      "sourceVerified": true
     }
   },
-  "notes": "USDC address is the 6-decimal ERC-20 view of Arc's native gas USDC. Verified post-deploy with cast: code present, usdc() == 0x3600...0000."
+  "notes": "USDC address is the 6-decimal ERC-20 view of Arc's native gas USDC. Verified post-deploy with cast: code present, usdc() == 0x3600...0000. Source code verified on arcscan (Blockscout) 2026-07-21 — readable source + ABI at the explorer link."
 }

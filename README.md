@@ -85,9 +85,10 @@ Hackathon in progress. See `docs/PLAN.md` for the checkpoint plan.
 Contracts unit-tested (21/21) and the full job cycle is proven locally on
 anvil (both release and timeout-refund paths).
 
-**JobEscrow is live on Arc Testnet:**
+**JobEscrow is live on Arc Testnet with verified source:**
 [`0x52a8c98d90f5a2feef6aa07ebd25197456b4e4e7`](https://testnet.arcscan.app/address/0x52a8c98d90f5a2feef6aa07ebd25197456b4e4e7)
-(deploy details in `docs/deployed.json`).
+— the explorer shows the readable Solidity source and ABI, not just
+bytecode (deploy details in `docs/deployed.json`).
 
 **The full cycle is proven on Arc Testnet with a Circle Agent Wallet**
 (`bun run smoke:arc`): the requester spends from an agent-controlled SCA
