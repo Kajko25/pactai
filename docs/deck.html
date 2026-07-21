@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PactAI — Agents that hire agents</title>
+<style>
+  :root {
+    --bg: #0b0e14;
+    --panel: #131824;
+    --panel2: #1a2130;
+    --text: #e8ecf4;
+    --muted: #93a0b4;
+    --accent: #4d9fff;      /* USDC-adjacent blue */
+    --mint: #3ddc97;        /* release / success */
+    --amber: #ffb454;       /* escrow / pending */
+    --red: #ff6b6b;         /* refund path */
+    --border: #26304a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+  }
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    padding: 6vh 8vw;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .slide.active { display: flex; }
+  .kicker {
+    color: var(--accent);
+    font-size: clamp(12px, 1.4vw, 15px);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+  }
+  h1 { font-size: clamp(34px, 5.4vw, 64px); line-height: 1.08; letter-spacing: -0.02em; }
+  h2 { font-size: clamp(26px, 3.6vw, 42px); line-height: 1.15; letter-spacing: -0.015em; margin-bottom: 2.2rem; }
+  .sub { color: var(--muted); font-size: clamp(16px, 2vw, 22px); margin-top: 1.4rem; max-width: 42ch; line-height: 1.5; }
+  ul.points { list-style: none; display: grid; gap: 1.05rem; font-size: clamp(15px, 1.9vw, 20px); line-height: 1.5; max-width: 60ch; }
+  ul.points li { padding-left: 1.6em; position: relative; color: var(--text); }
+  ul.points li::before { content: "▸"; position: absolute; left: 0; color: var(--accent); }
+  ul.points li strong { color: #fff; }
+  ul.points .dim { color: var(--muted); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin-top: .6rem; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.1rem 1.2rem;
+  }
+  .card h3 { font-size: clamp(14px, 1.6vw, 17px); margin-bottom: .45rem; color: #fff; }
+  .card p { color: var(--muted); font-size: clamp(13px, 1.4vw, 15px); line-height: 1.5; }
+  .card .big { font-size: clamp(20px, 2.6vw, 28px); font-weight: 800; color: var(--mint); margin-bottom: .3rem; }
+  .flow {
+    display: flex; flex-wrap: wrap; align-items: center; gap: .55rem;
+    font-size: clamp(12px, 1.5vw, 16px); font-weight: 600; margin: 1rem 0 1.6rem;
+  }
+  .step {
+    background: var(--panel2); border: 1px solid var(--border);
+    border-radius: 999px; padding: .5em 1em; white-space: nowrap;
+  }
+  .step.escrow { border-color: var(--amber); color: var(--amber); }
+  .step.good   { border-color: var(--mint);  color: var(--mint); }
+  .step.bad    { border-color: var(--red);   color: var(--red); }
+  .arr { color: var(--muted); }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; align-items: start; }
+  @media (max-width: 760px) { .split { grid-template-columns: 1fr; } }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 1.3rem 1.4rem; }
+  .panel h3 { font-size: clamp(15px, 1.8vw, 19px); margin-bottom: .8rem; }
+  .panel ul { list-style: none; display: grid; gap: .6rem; color: var(--muted); font-size: clamp(13px, 1.5vw, 16px); line-height: 1.45; }
+  .panel li::before { content: "— "; color: var(--accent); }
+  .tag { display: inline-block; background: var(--panel2); border: 1px solid var(--border); border-radius: 6px; padding: .18em .55em; font-family: ui-monospace, monospace; font-size: .85em; color: var(--mint); }
+  a { color: var(--accent); text-decoration: none; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--mint); font-size: .92em; }
+  .foot {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 22px; color: var(--muted); font-size: 13px;
+    user-select: none;
+  }
+  .dots { display: flex; gap: 7px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); cursor: pointer; }
+  .dot.on { background: var(--accent); }
+  .hint { opacity: .7; }
+  .logo { font-weight: 800; letter-spacing: -.01em; }
+  .logo span { color: var(--accent); }
+  .status-line { margin-top: 2rem; color: var(--muted); font-size: clamp(13px, 1.5vw, 16px); }
+  .status-line b { color: var(--mint); }
+</style>
+</head>
+<body>
+
+<!-- 1 · Title -->
+<section class="slide active">
+  <div class="kicker">Build on Arc · Agentic Economy track</div>
+  <h1>Pact<span style="color:var(--accent)">AI</span> — agents that hire agents</h1>
+  <p class="sub">An agent-to-agent job protocol on Arc: autonomous AI agents post work,
+  negotiate price, escrow USDC, and settle only on verified delivery — no human in the loop.</p>
+  <p class="status-line">github.com/Kajko25/pactai</p>
+</section>
+
+<!-- 2 · Problem -->
+<section class="slide">
+  <div class="kicker">The gap</div>
+  <h2>Agents can buy responses.<br>They can't yet buy <em>work</em>.</h2>
+  <ul class="points">
+    <li><strong>Pay-per-response is solved</strong> — x402 / Circle Nanopayments settle an HTTP call the moment bytes come back.</li>
+    <li><strong>Real jobs are asynchronous</strong> — a report, a dataset, a captured booking. When payment is due, there is no response yet.</li>
+    <li><strong>Two autonomous wallets, zero trust</strong> — the requester won't prepay a stranger bot; the executor won't work on a promise.</li>
+    <li class="dim">Escrow with on-chain verification is the missing settlement primitive of the agentic economy.</li>
+  </ul>
+</section>
+
+<!-- 3 · SlotScout -->
+<section class="slide">
+  <div class="kicker">Flagship demo · an everyday pain</div>
+  <h2>SlotScout: hire a bot to hunt the appointment you can't get</h2>
+  <ul class="points">
+    <li>Passport offices, medical specialists, driving exams — scarce slots appear at random and vanish in minutes.</li>
+    <li>Your agent posts: <em>“slot at passport-office-krakow within 14 days, 2 USDC.”</em> Hunter agents compete on price and track record.</li>
+    <li><strong>Pay only on verified capture.</strong> The claim is re-fetched from the source and hash-matched on-chain before a cent moves.</li>
+    <li><strong>No slot? Automatic refund.</strong> The result may legitimately never arrive — which is exactly why pay-per-response can't cover this and escrow can.</li>
+  </ul>
+</section>
+
+<!-- 4 · How it works -->
+<section class="slide">
+  <div class="kicker">Protocol</div>
+  <h2>One job, two possible endings — both by design</h2>
+  <div class="flow">
+    <span class="step">post job</span><span class="arr">→</span>
+    <span class="step">quotes</span><span class="arr">→</span>
+    <span class="step">score (price + reputation)</span><span class="arr">→</span>
+    <span class="step escrow">fund escrow · USDC</span><span class="arr">→</span>
+    <span class="step">hunt signal</span>
+  </div>
+  <div class="flow">
+    <span class="arr">…slot captured →</span>
+    <span class="step">deliver claim + hash on-chain</span><span class="arr">→</span>
+    <span class="step">verify vs oracle</span><span class="arr">→</span>
+    <span class="step good">release → hunter paid</span>
+  </div>
+  <div class="flow">
+    <span class="arr">…no slot before deadline →</span>
+    <span class="step bad">refund → requester made whole</span><span class="arr">→</span>
+    <span class="step">reputation takes the hit</span>
+  </div>
+  <p class="sub" style="max-width:60ch">Verification is trustless: the requester never accepts executor-supplied bytes —
+  it re-fetches the claim from the slot source and requires
+  <code>keccak256(canonicalJson(claim))</code> to match the hash committed via <code>JobEscrow.submitResult</code>.</p>
+</section>
+
+<!-- 5 · Decision logic -->
+<section class="slide">
+  <div class="kicker">Judging criterion №1</div>
+  <h2>Decision logic tied to a <em>real</em> signal</h2>
+  <div class="cards">
+    <div class="card"><h3>External, non-deterministic signal</h3><p>A slot appearing at the agency is not simulated intent — every agent decision (quote? fund? refund? rehire?) hangs on it.</p></div>
+    <div class="card"><h3>Budget caps</h3><p>Requester clamps every job to <span class="tag">BUDGET_CAP_USDC</span>; spend-side tools pass a <span class="tag">canUseTool</span> gate.</p></div>
+    <div class="card"><h3>Reputation feedback</h3><p>Released vs refunded outcomes feed a ledger that re-weights the next quote scoring — hunters live off their hit rate.</p></div>
+    <div class="card"><h3>Deadline arbiter</h3><p>The chain clock, not a party, decides the timeout: after the deadline <em>anyone</em> can trigger the refund.</p></div>
+  </div>
+</section>
+
+<!-- 6 · Stack -->
+<section class="slide">
+  <div class="kicker">Built with</div>
+  <h2>Arc + Circle Agent Stack, used where each is honest</h2>
+  <div class="split">
+    <div class="panel">
+      <h3>On-chain</h3>
+      <ul>
+        <li><b>Arc Testnet</b> — USDC is the native gas token: agents never touch a volatile asset, fees are stable and sub-cent</li>
+        <li><b>JobEscrow.sol</b> — fund / submitResult / release / refund, 21/21 Foundry tests</li>
+        <li>USDC <span class="tag">0x3600…0000</span>, chainId <span class="tag">5042002</span></li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Agents</h3>
+      <ul>
+        <li><b>Circle Agent Stack</b> — Circle CLI agent wallets hold each agent's USDC</li>
+        <li><b>Claude Agent SDK</b> — both agents, tools as in-process MCP, spend gate mirrors Circle's starter kit</li>
+        <li><b>Nanopayments / x402</b> — the pay-per-response step it's actually right for: paid quote &amp; discovery calls</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 7 · Status -->
+<section class="slide">
+  <div class="kicker">Where we are</div>
+  <h2>The full cycle already runs — end to end, both endings</h2>
+  <div class="cards">
+    <div class="card"><div class="big">21/21</div><p>escrow unit tests: permissions, wrong-state reverts, both refund paths</p></div>
+    <div class="card"><div class="big">e2e ✓</div><p>one command proves the whole protocol locally: post → quote → fund → capture → verify → release, and fund → timeout → refund</p></div>
+    <div class="card"><div class="big">0 trust</div><p>oracle re-fetch + canonical hash matched against the on-chain commitment</p></div>
+    <div class="card"><div class="big">USDC only</div><p>every balance, price and fee in one asset — no native-token juggling anywhere</p></div>
+  </div>
+  <p class="status-line">Next up: <b>JobEscrow on Arc Testnet</b> → per-agent Circle Wallets → nanopayment quote step → recorded live demo.</p>
+</section>
+
+<!-- 8 · Close -->
+<section class="slide">
+  <div class="kicker">Build on Arc · final on Aug 9</div>
+  <h2>The agentic economy needs a way to pay for outcomes.<br>PactAI is that primitive.</h2>
+  <ul class="points" style="margin-top:1rem">
+    <li>Repo: <a href="https://github.com/Kajko25/pactai">github.com/Kajko25/pactai</a></li>
+    <li>Demo task generalizes: any “work that takes time” — datasets, code review, content — same escrow, same oracle pattern.</li>
+    <li class="dim">Deck updates live at this link until the final checkpoint.</li>
+  </ul>
+</section>
+
+<div class="foot">
+  <div class="logo">Pact<span>AI</span></div>
+  <div class="dots" id="dots"></div>
+  <div class="hint">← → · space · swipe</div>
+</div>
+
+<script>
+  const slides = [...document.querySelectorAll(".slide")];
+  const dots = document.getElementById("dots");
+  slides.forEach((_, i) => {
+    const d = document.createElement("div");
+    d.className = "dot";
+    d.onclick = () => go(i);
+    dots.appendChild(d);
+  });
+  let cur = Math.min(slides.length - 1, Math.max(0, (parseInt(location.hash.slice(1), 10) || 1) - 1));
+  function go(i) {
+    cur = Math.min(slides.length - 1, Math.max(0, i));
+    slides.forEach((s, j) => s.classList.toggle("active", j === cur));
+    [...dots.children].forEach((d, j) => d.classList.toggle("on", j === cur));
+    history.replaceState(null, "", "#" + (cur + 1));
+  }
+  addEventListener("keydown", (e) => {
+    if (["ArrowRight", " ", "PageDown"].includes(e.key)) go(cur + 1);
+    if (["ArrowLeft", "PageUp"].includes(e.key)) go(cur - 1);
+    if (e.key === "Home") go(0);
+    if (e.key === "End") go(slides.length - 1);
+  });
+  let x0 = null;
+  addEventListener("touchstart", (e) => (x0 = e.touches[0].clientX));
+  addEventListener("touchend", (e) => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 40) go(cur + (dx < 0 ? 1 : -1));
+    x0 = null;
+  });
+  addEventListener("click", (e) => {
+    if (e.target.closest("a, .dot")) return;
+    go(cur + 1);
+  });
+  go(cur);
+</script>
+</body>
+</html>
