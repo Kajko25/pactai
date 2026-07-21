@@ -22,7 +22,8 @@ the escrow's timeout refund is the designed outcome, not an error path.
 3. **Select + fund escrow.** Requester agent picks a quote — decision logic:
    `score = f(price, executor.reputation, ETA)` — then calls
    `JobEscrow.fund(jobId, executor, amount)`, transferring USDC into the
-   contract. Gas is paid in USDC via Circle Paymaster.
+   contract. The requester spends from a Circle Agent Wallet (SCA via the
+   Circle CLI); gas is USDC natively on Arc, paid from the same balance.
 4. **Do the work.** Executor agent performs the task and submits a result
    (a URI + hash) to the job board and calls
    `JobEscrow.submitResult(jobId, resultHash)`.

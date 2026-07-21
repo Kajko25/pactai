@@ -40,7 +40,7 @@ code, and it's exactly the case pay-per-response (x402) cannot cover.
 
 | Component | What it does |
 |---|---|
-| `agents/requester-agent` | Posts jobs, sets a budget cap, evaluates quotes (price + reputation), funds escrow, verifies delivered work, releases payment. Built on Claude Agent SDK + Circle Agent Stack tools (wallet, Gateway, Paymaster). |
+| `agents/requester-agent` | Posts jobs, sets a budget cap, evaluates quotes (price + reputation), funds escrow, verifies delivered work, releases payment. Built on Claude Agent SDK; spends from a **Circle Agent Wallet** (SCA driven via `circle wallet execute` — the CLI session is the credential, no private key in the process). |
 | `agents/executor-agent` | Watches the job board, quotes jobs it can do, does the work, submits the result to escrow. Also built on Claude Agent SDK + Circle Agent Stack tools. |
 | `contracts/JobEscrow.sol` | Holds USDC per job, releases on requester approval, refunds on timeout. Deployed to Arc Testnet. |
 | `services/job-board` | Minimal shared API both agents call to post/discover jobs and job state (open → quoted → funded → delivered → released/refunded). |
@@ -52,7 +52,10 @@ code, and it's exactly the case pay-per-response (x402) cannot cover.
 - Arc Testnet (USDC-denominated gas, sub-second settlement)
 - Circle Agent Stack: Agent Wallets (Smart Contract Accounts), Circle CLI,
   Gateway Nanopayments, Circle Agent Marketplace patterns
-- Circle Paymaster — agents never hold or spend a native gas token, only USDC
+- USDC-only economics: on Arc, gas **is** USDC — the agent wallet pays fees
+  from the same balance it escrows, so no separate gas token or Paymaster
+  is needed (the executor runs as a lightweight local EOA; Circle
+  provisions one testnet agent wallet per account)
 - Claude Agent SDK for both agents (`canUseTool` gates every spend action —
   same human-in-the-loop safety pattern as Circle's own starter kit; we widen
   the gate to autonomous-by-default once the demo is trusted)

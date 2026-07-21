@@ -238,7 +238,7 @@
     <div class="panel">
       <h3>Agents</h3>
       <ul>
-        <li><b>Circle Agent Stack</b> — Circle CLI agent wallets hold each agent's USDC</li>
+        <li><b>Circle Agent Stack</b> — the requester spends from a Circle Agent Wallet (SCA via <code>circle wallet execute</code>; the CLI session is the credential, no key in the process)</li>
         <li><b>Claude Agent SDK</b> — both agents, tools as in-process MCP, spend gate mirrors Circle's starter kit</li>
         <li><b>Nanopayments / x402</b> — the pay-per-response step it's actually right for: paid quote &amp; discovery calls</li>
       </ul>
@@ -258,7 +258,7 @@
     <div class="card"><div class="big">0 trust</div><p>oracle re-fetch + canonical hash matched against the on-chain commitment</p></div>
     <div class="card"><div class="big">USDC only</div><p>every balance, price and fee in one asset — no native-token juggling anywhere</p></div>
   </div>
-  <p class="status-line">Next up: <b>JobEscrow on Arc Testnet</b> → per-agent Circle Wallets → nanopayment quote step → recorded live demo.</p>
+  <p class="status-line"><b>Live on Arc Testnet:</b> JobEscrow at <span class="tag">0x52a8…e4e7</span>, and the whole cycle — fund from a Circle Agent Wallet, capture, verify, release; plus a real-clock timeout refund — already executed on-chain. Next: nanopayment quote step → recorded live demo.</p>
 </section>
 
 <!-- 10 · Close -->
