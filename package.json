@@ -11,7 +11,8 @@
     "executor": "bun run --cwd agents/executor-agent demo",
     "job-board": "bun run --cwd services/job-board dev",
     "e2e": "bun run scripts/e2e-local.ts",
-    "slot-source": "bun run --cwd services/slot-source dev"
+    "slot-source": "bun run --cwd services/slot-source dev",
+    "smoke:arc": "bun run scripts/smoke-arc.ts"
   },
   "devDependencies": {
     "@pactai/shared": "workspace:*",

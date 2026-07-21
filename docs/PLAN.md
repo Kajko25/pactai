@@ -50,7 +50,13 @@ All deadlines AoE (UTC-12). Submit early — late finals aren't judged.
       performs one concrete task type end-to-end (pick ONE task for the demo,
       e.g. "summarize this URL" or "validate this dataset" — narrow scope
       beats a vague general-purpose executor)
-- [ ] Wire Circle Paymaster so both agents pay gas in USDC only
+- [x] Requester agent spends from a **Circle Agent Wallet** (SCA via
+      `circle wallet execute`, no key in env; WALLET_BACKEND=circle) —
+      full cycle smoke-tested ON ARC (2026-07-21, `bun run smoke:arc`):
+      fund → capture → verify → release AND fund → real 75s deadline →
+      refund. Executor = local EOA (Circle provisions one testnet agent
+      wallet per account; documented honestly). Gas is USDC natively on
+      Arc — no separate Paymaster needed there.
 - [ ] Reputation ledger feeding back into requester's quote scoring
 - [ ] Full end-to-end dry run: post job → quote → fund → deliver → verify →
       release, on Arc Testnet, recorded

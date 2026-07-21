@@ -84,7 +84,13 @@ anvil (both release and timeout-refund paths).
 
 **JobEscrow is live on Arc Testnet:**
 [`0x52a8c98d90f5a2feef6aa07ebd25197456b4e4e7`](https://testnet.arcscan.app/address/0x52a8c98d90f5a2feef6aa07ebd25197456b4e4e7)
-(deploy details in `docs/deployed.json`). Next: on-chain smoke test of the
-full cycle, per-agent Circle Wallets, nanopayment quote step.
+(deploy details in `docs/deployed.json`).
+
+**The full cycle is proven on Arc Testnet with a Circle Agent Wallet**
+(`bun run smoke:arc`): the requester spends from an agent-controlled SCA
+through `circle wallet execute` — no private key in the process, gas paid
+from the wallet's own USDC — funding, releasing on verified capture, and
+refunding after a real-clock deadline. The executor runs as a lightweight
+local EOA. Next: nanopayment quote step, dynamic negotiation.
 
 Presentation deck: https://kajko25.github.io/pactai/deck.html

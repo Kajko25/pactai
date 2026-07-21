@@ -13,7 +13,7 @@
  */
 import { query, createSdkMcpServer, tool } from "@anthropic-ai/claude-agent-sdk";
 import { z } from "zod";
-import { makeEscrowClient, type Job } from "@pactai/shared";
+import { makeEscrowClient, makeCircleEscrowClient, type Job } from "@pactai/shared";
 import { makeRequester } from "./lib";
 import type { Address, Hex } from "viem";
 
@@ -26,17 +26,32 @@ function requireEnv(name: string): string {
   return value;
 }
 
+// WALLET_BACKEND=circle spends from a Circle Agent Wallet via the Circle CLI
+// (no private key in the env — the CLI session is the credential); the
+// default is a plain viem EOA for local development.
+const escrow =
+  process.env.WALLET_BACKEND === "circle"
+    ? makeCircleEscrowClient({
+        rpcUrl: requireEnv("RPC_URL"),
+        chainId: Number(requireEnv("CHAIN_ID")),
+        circleChain: requireEnv("CIRCLE_CHAIN"),
+        walletAddress: requireEnv("CIRCLE_WALLET_ADDRESS") as Address,
+        escrowAddress: requireEnv("JOB_ESCROW_ADDRESS") as Address,
+        usdcAddress: requireEnv("USDC_ADDRESS") as Address,
+      })
+    : makeEscrowClient({
+        rpcUrl: requireEnv("RPC_URL"),
+        chainId: Number(requireEnv("CHAIN_ID")),
+        privateKey: requireEnv("REQUESTER_PRIVATE_KEY") as Hex,
+        escrowAddress: requireEnv("JOB_ESCROW_ADDRESS") as Address,
+        usdcAddress: requireEnv("USDC_ADDRESS") as Address,
+      });
+
 const requester = makeRequester({
   jobBoardUrl: process.env.JOB_BOARD_URL ?? "http://localhost:4000",
   slotSourceUrl: process.env.SLOT_SOURCE_URL ?? "http://localhost:4100",
   budgetCapUsdc: Number(process.env.BUDGET_CAP_USDC ?? 5),
-  escrow: makeEscrowClient({
-    rpcUrl: requireEnv("RPC_URL"),
-    chainId: Number(requireEnv("CHAIN_ID")),
-    privateKey: requireEnv("REQUESTER_PRIVATE_KEY") as Hex,
-    escrowAddress: requireEnv("JOB_ESCROW_ADDRESS") as Address,
-    usdcAddress: requireEnv("USDC_ADDRESS") as Address,
-  }),
+  escrow,
 });
 
 // In-memory cache of jobs this agent posted, so tools can refer to them by id.

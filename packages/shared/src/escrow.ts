@@ -96,6 +96,29 @@ export function usdcUnits(amount: number): bigint {
   return parseUnits(amount.toString(), 6);
 }
 
+/**
+ * The escrow surface agent logic depends on. Two implementations exist:
+ * - makeEscrowClient (viem + local private key: anvil, plain EOAs)
+ * - makeCircleEscrowClient (Circle CLI agent wallet — see escrowCircle.ts)
+ */
+export interface EscrowActor {
+  address: Address;
+  approveUsdc(amount: bigint): Promise<Hex>;
+  usdcBalance(owner?: Address): Promise<bigint>;
+  fund(jobBoardId: string, executor: Address, amount: bigint, deadline: number): Promise<Hex>;
+  submitResult(jobBoardId: string, resultHash: Hex): Promise<Hex>;
+  release(jobBoardId: string): Promise<Hex>;
+  refund(jobBoardId: string): Promise<Hex>;
+  getJob(jobBoardId: string): Promise<{
+    requester: Address;
+    executor: Address;
+    amount: bigint;
+    deadline: bigint;
+    state: number;
+    resultHash: Hex;
+  }>;
+}
+
 export interface EscrowClientConfig {
   rpcUrl: string;
   chainId: number;
@@ -114,8 +137,11 @@ export function makeEscrowClient(config: EscrowClientConfig) {
     rpcUrls: { default: { http: [config.rpcUrl] } },
   });
   const account = privateKeyToAccount(config.privateKey);
-  const publicClient = createPublicClient({ chain, transport: http() });
-  const walletClient = createWalletClient({ chain, transport: http(), account });
+  // Public Arc RPC rate-limits aggressively — poll gently and retry with
+  // backoff instead of hammering it.
+  const transport = http(config.rpcUrl, { retryCount: 6, retryDelay: 2000 });
+  const publicClient = createPublicClient({ chain, transport, pollingInterval: 3000 });
+  const walletClient = createWalletClient({ chain, transport, account });
 
   async function write(
     address: Address,

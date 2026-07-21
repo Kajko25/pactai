@@ -6,7 +6,7 @@ import {
   usdcUnits,
   EscrowState,
   SlotClaimSchema,
-  type EscrowClient,
+  type EscrowActor,
   type Job,
   type JobResult,
   type Quote,
@@ -25,7 +25,7 @@ export interface RequesterConfig {
   jobBoardUrl: string;
   slotSourceUrl: string;
   budgetCapUsdc: number;
-  escrow: EscrowClient;
+  escrow: EscrowActor;
 }
 
 export function makeRequester(cfg: RequesterConfig) {

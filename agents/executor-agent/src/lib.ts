@@ -3,7 +3,7 @@ import {
   parseSlotTask,
   SlotClaimSchema,
   SlotSchema,
-  type EscrowClient,
+  type EscrowActor,
   type Job,
   type JobResult,
   type Quote,
@@ -22,7 +22,7 @@ export interface ExecutorConfig {
   jobBoardUrl: string;
   slotSourceUrl: string;
   quotePriceUsdc: number;
-  escrow: EscrowClient;
+  escrow: EscrowActor;
 }
 
 export function makeExecutor(cfg: ExecutorConfig) {
