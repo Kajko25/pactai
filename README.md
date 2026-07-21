@@ -80,4 +80,11 @@ anything touches Arc Testnet. Running the actual LLM-driven agents
 
 Hackathon in progress. See `docs/PLAN.md` for the checkpoint plan.
 Contracts unit-tested (21/21) and the full job cycle is proven locally on
-anvil (both release and timeout-refund paths). Next: Arc Testnet deploy.
+anvil (both release and timeout-refund paths).
+
+**JobEscrow is live on Arc Testnet:**
+[`0x52a8c98d90f5a2feef6aa07ebd25197456b4e4e7`](https://testnet.arcscan.app/address/0x52a8c98d90f5a2feef6aa07ebd25197456b4e4e7)
+(deploy details in `docs/deployed.json`). Next: on-chain smoke test of the
+full cycle, per-agent Circle Wallets, nanopayment quote step.
+
+Presentation deck: https://kajko25.github.io/pactai/deck.html

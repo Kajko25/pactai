@@ -1,0 +1,18 @@
+{
+  "chain": "arc-testnet",
+  "chainId": 5042002,
+  "rpcUrl": "https://rpc.testnet.arc.network",
+  "explorer": "https://testnet.arcscan.app",
+  "contracts": {
+    "JobEscrow": {
+      "address": "0x52a8c98d90f5a2feef6aa07ebd25197456b4e4e7",
+      "deployTx": "0x5da7402960b6e70c82abd976da2289db9ae1e21acf1715627731dd21c68965db",
+      "block": 52952483,
+      "deployer": "0x6D4843155412832dC3Fa9C59e593cdAfdf52639D",
+      "constructorArgs": {
+        "usdcAddress": "0x3600000000000000000000000000000000000000"
+      }
+    }
+  },
+  "notes": "USDC address is the 6-decimal ERC-20 view of Arc's native gas USDC. Verified post-deploy with cast: code present, usdc() == 0x3600...0000."
+}

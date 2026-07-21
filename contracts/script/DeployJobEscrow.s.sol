@@ -11,7 +11,9 @@ import {JobEscrow} from "../src/JobEscrow.sol";
 contract DeployJobEscrow is Script {
     function run() external returns (JobEscrow escrow) {
         address usdcAddress = vm.envAddress("USDC_ADDRESS");
-        vm.startBroadcast();
+        // Key comes from the env (contracts/.env, gitignored) — never from a
+        // plain-text CLI flag.
+        vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
         escrow = new JobEscrow(usdcAddress);
         vm.stopBroadcast();
         console.log("JobEscrow deployed at", address(escrow));

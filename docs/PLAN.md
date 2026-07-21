@@ -41,7 +41,9 @@ All deadlines AoE (UTC-12). Submit early — late finals aren't judged.
 
 ## Week 2–3 (26 Jul → 9 Aug)
 
-- [ ] Deploy `JobEscrow` to Arc Testnet
+- [x] Deploy `JobEscrow` to Arc Testnet (2026-07-21, ahead of schedule:
+      `0x52a8c98d90f5a2feef6aa07ebd25197456b4e4e7`, verified with cast —
+      see docs/deployed.json)
 - [ ] `requester-agent`: Claude Agent SDK app — posts a real job, scores
       incoming quotes, funds escrow, verifies + releases
 - [ ] `executor-agent`: Claude Agent SDK app — polls job board, quotes,
