@@ -1,0 +1,17 @@
+{
+  "name": "pactai",
+  "private": true,
+  "workspaces": [
+    "agents/*",
+    "services/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "requester": "bun run --cwd agents/requester-agent demo",
+    "executor": "bun run --cwd agents/executor-agent demo",
+    "job-board": "bun run --cwd services/job-board dev"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  }
+}

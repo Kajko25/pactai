@@ -1,0 +1,13 @@
+{
+  "name": "@pactai/job-board",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run src/server.ts"
+  },
+  "dependencies": {
+    "@pactai/shared": "workspace:*",
+    "hono": "^4.6.0"
+  }
+}
