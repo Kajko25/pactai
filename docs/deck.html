@@ -45,9 +45,15 @@
     margin-bottom: 1.2rem;
   }
   h1 { font-size: clamp(34px, 5.4vw, 64px); line-height: 1.08; letter-spacing: -0.02em; }
-  h2 { font-size: clamp(26px, 3.6vw, 42px); line-height: 1.15; letter-spacing: -0.015em; margin-bottom: 2.2rem; }
-  .sub { color: var(--muted); font-size: clamp(16px, 2vw, 22px); margin-top: 1.4rem; max-width: 42ch; line-height: 1.5; }
-  ul.points { list-style: none; display: grid; gap: 1.05rem; font-size: clamp(15px, 1.9vw, 20px); line-height: 1.5; max-width: 60ch; }
+  h2 { font-size: clamp(26px, 3.6vw, 42px); line-height: 1.15; letter-spacing: -0.015em; margin-bottom: 2rem; }
+  .sub { color: var(--muted); font-size: clamp(16px, 2vw, 22px); margin-top: 1.4rem; max-width: 46ch; line-height: 1.5; }
+  .plain {
+    margin-top: 1.6rem; max-width: 62ch;
+    color: var(--muted); font-size: clamp(14px, 1.6vw, 17px); line-height: 1.55;
+    border-left: 3px solid var(--accent); padding-left: 1em; font-style: italic;
+  }
+  .plain b { color: var(--text); font-style: normal; }
+  ul.points { list-style: none; display: grid; gap: 1.05rem; font-size: clamp(15px, 1.9vw, 20px); line-height: 1.5; max-width: 62ch; }
   ul.points li { padding-left: 1.6em; position: relative; color: var(--text); }
   ul.points li::before { content: "▸"; position: absolute; left: 0; color: var(--accent); }
   ul.points li strong { color: #fff; }
@@ -62,9 +68,10 @@
   .card h3 { font-size: clamp(14px, 1.6vw, 17px); margin-bottom: .45rem; color: #fff; }
   .card p { color: var(--muted); font-size: clamp(13px, 1.4vw, 15px); line-height: 1.5; }
   .card .big { font-size: clamp(20px, 2.6vw, 28px); font-weight: 800; color: var(--mint); margin-bottom: .3rem; }
+  .card .num { font-size: clamp(20px, 2.6vw, 28px); font-weight: 800; color: var(--accent); margin-bottom: .3rem; }
   .flow {
     display: flex; flex-wrap: wrap; align-items: center; gap: .55rem;
-    font-size: clamp(12px, 1.5vw, 16px); font-weight: 600; margin: 1rem 0 1.6rem;
+    font-size: clamp(12px, 1.5vw, 16px); font-weight: 600; margin: 1rem 0 1.2rem;
   }
   .step {
     background: var(--panel2); border: 1px solid var(--border);
@@ -83,6 +90,13 @@
   .tag { display: inline-block; background: var(--panel2); border: 1px solid var(--border); border-radius: 6px; padding: .18em .55em; font-family: ui-monospace, monospace; font-size: .85em; color: var(--mint); }
   a { color: var(--accent); text-decoration: none; }
   code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--mint); font-size: .92em; }
+  /* hook slide */
+  .clock { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); font-size: clamp(15px, 1.8vw, 20px); letter-spacing: .02em; }
+  .hookline { display: grid; gap: 1.1rem; font-size: clamp(20px, 3vw, 34px); line-height: 1.3; font-weight: 600; max-width: 30ch; }
+  .hookline .gone { color: var(--red); font-weight: 800; }
+  .hookline .beat { color: var(--muted); font-weight: 400; font-size: .72em; }
+  .punch { font-size: clamp(24px, 3.6vw, 44px); font-weight: 800; line-height: 1.2; letter-spacing: -0.015em; }
+  .punch em { color: var(--mint); font-style: normal; }
   .foot {
     position: fixed; bottom: 0; left: 0; right: 0;
     display: flex; justify-content: space-between; align-items: center;
@@ -105,38 +119,57 @@
 <section class="slide active">
   <div class="kicker">Build on Arc · Agentic Economy track</div>
   <h1>Pact<span style="color:var(--accent)">AI</span> — agents that hire agents</h1>
-  <p class="sub">An agent-to-agent job protocol on Arc: autonomous AI agents post work,
-  negotiate price, escrow USDC, and settle only on verified delivery — no human in the loop.</p>
+  <p class="sub">Autonomous AI agents post work, negotiate price, escrow USDC,
+  and settle only on verified delivery. First mission: winning back the
+  appointments you keep losing.</p>
   <p class="status-line">github.com/Kajko25/pactai</p>
 </section>
 
-<!-- 2 · Problem -->
+<!-- 2 · HOOK -->
 <section class="slide">
-  <div class="kicker">The gap</div>
-  <h2>Agents can buy responses.<br>They can't yet buy <em>work</em>.</h2>
-  <ul class="points">
-    <li><strong>Pay-per-response is solved</strong> — x402 / Circle Nanopayments settle an HTTP call the moment bytes come back.</li>
-    <li><strong>Real jobs are asynchronous</strong> — a report, a dataset, a captured booking. When payment is due, there is no response yet.</li>
-    <li><strong>Two autonomous wallets, zero trust</strong> — the requester won't prepay a stranger bot; the executor won't work on a promise.</li>
-    <li class="dim">Escrow with on-chain verification is the missing settlement primitive of the agentic economy.</li>
+  <div class="kicker">A Tuesday you know too well</div>
+  <div class="hookline">
+    <span class="clock">07:58 — the clinic opens online booking at 08:00. You're ready.</span>
+    <span class="clock">08:00:12 — refresh.</span>
+    <span class="clock">08:00:41 — refresh. There! Click—</span>
+    <span class="gone">“No appointments available.”</span>
+    <span class="beat">Someone was faster. Someone is always faster.</span>
+  </div>
+  <p class="sub">Specialist visits. Passport offices. Driving exams. Visa windows.
+  The slots exist — you just never catch them, because catching them is a
+  full-time job for a machine, not a human with a life.</p>
+</section>
+
+<!-- 3 · PROMISE -->
+<section class="slide">
+  <div class="kicker">The promise</div>
+  <p class="punch">What if something hunted that slot for you, 24/7 —<br>
+  and only got paid <em>when it actually caught one</em>?</p>
+  <ul class="points" style="margin-top:2.2rem">
+    <li>You say the goal once: <em>“cardiologist within 14 days, I'll pay up to 2 USDC.”</em></li>
+    <li>Your <strong>personal agent</strong> hires a <strong>hunter agent</strong> — a bot whose whole existence is catching slots the second they appear.</li>
+    <li>Caught &amp; proven → the hunter earns its fee. Nothing caught → <strong>your money comes back by itself.</strong></li>
+    <li class="dim">No subscriptions, no “premium queue”, no trusting a stranger's bot with your card. The rest of this deck explains how that's possible.</li>
   </ul>
 </section>
 
-<!-- 3 · SlotScout -->
+<!-- 4 · For Kowalski: how it feels -->
 <section class="slide">
-  <div class="kicker">Flagship demo · an everyday pain</div>
-  <h2>SlotScout: hire a bot to hunt the appointment you can't get</h2>
-  <ul class="points">
-    <li>Passport offices, medical specialists, driving exams — scarce slots appear at random and vanish in minutes.</li>
-    <li>Your agent posts: <em>“slot at passport-office-krakow within 14 days, 2 USDC.”</em> Hunter agents compete on price and track record.</li>
-    <li><strong>Pay only on verified capture.</strong> The claim is re-fetched from the source and hash-matched on-chain before a cent moves.</li>
-    <li><strong>No slot? Automatic refund.</strong> The result may legitimately never arrive — which is exactly why pay-per-response can't cover this and escrow can.</li>
-  </ul>
+  <div class="kicker">How it feels to use</div>
+  <h2>Three steps, zero refreshing, zero leap of faith</h2>
+  <div class="cards">
+    <div class="card"><div class="num">1</div><h3>Say what you need</h3><p>Facility, latest acceptable date, and the most you'll pay. That's the entire job description your agent posts to the market.</p></div>
+    <div class="card"><div class="num">2</div><h3>Hunters compete for the gig</h3><p>Hunter agents bid with a price and their track record. Your agent picks the best deal — it knows which hunters actually deliver, because every past win and miss is on the public score-board.</p></div>
+    <div class="card"><div class="num">3</div><h3>Money moves only on proof</h3><p>Your fee waits in a <b>glass box neither side can open alone</b>. Slot captured and independently verified → the box opens for the hunter. Deadline passes with no slot → the box opens back to you. Automatically.</p></div>
+  </div>
+  <p class="plain">In plain words: <b>you never prepay a bot you don't know, and the
+  hunter never works on a promise.</b> The glass box — an escrow smart contract —
+  replaces trust between two pieces of software that have never met.</p>
 </section>
 
-<!-- 4 · How it works -->
+<!-- 5 · Under the hood: flow -->
 <section class="slide">
-  <div class="kicker">Protocol</div>
+  <div class="kicker">Under the hood</div>
   <h2>One job, two possible endings — both by design</h2>
   <div class="flow">
     <span class="step">post job</span><span class="arr">→</span>
@@ -156,24 +189,40 @@
     <span class="step bad">refund → requester made whole</span><span class="arr">→</span>
     <span class="step">reputation takes the hit</span>
   </div>
-  <p class="sub" style="max-width:60ch">Verification is trustless: the requester never accepts executor-supplied bytes —
-  it re-fetches the claim from the slot source and requires
-  <code>keccak256(canonicalJson(claim))</code> to match the hash committed via <code>JobEscrow.submitResult</code>.</p>
+  <p class="plain">In plain words: the <b>happy ending pays the hunter</b>, the
+  <b>empty-handed ending repays you</b> — and no human referee is needed for either,
+  because the deadline is enforced by the blockchain's own clock.</p>
 </section>
 
-<!-- 5 · Decision logic -->
+<!-- 6 · Verification -->
 <section class="slide">
-  <div class="kicker">Judging criterion №1</div>
-  <h2>Decision logic tied to a <em>real</em> signal</h2>
-  <div class="cards">
-    <div class="card"><h3>External, non-deterministic signal</h3><p>A slot appearing at the agency is not simulated intent — every agent decision (quote? fund? refund? rehire?) hangs on it.</p></div>
-    <div class="card"><h3>Budget caps</h3><p>Requester clamps every job to <span class="tag">BUDGET_CAP_USDC</span>; spend-side tools pass a <span class="tag">canUseTool</span> gate.</p></div>
-    <div class="card"><h3>Reputation feedback</h3><p>Released vs refunded outcomes feed a ledger that re-weights the next quote scoring — hunters live off their hit rate.</p></div>
-    <div class="card"><h3>Deadline arbiter</h3><p>The chain clock, not a party, decides the timeout: after the deadline <em>anyone</em> can trigger the refund.</p></div>
-  </div>
+  <div class="kicker">The trust problem, solved</div>
+  <h2>“I caught it, pay up” is not proof. Here's what is.</h2>
+  <ul class="points">
+    <li>The hunter never gets to say what it delivered — the requester agent <strong>re-fetches the booking claim straight from the source</strong> (the clinic/agency system acting as the oracle).</li>
+    <li>The claim's fingerprint — <code>keccak256(canonicalJson(claim))</code> — must match the hash the hunter committed on-chain via <code>JobEscrow.submitResult</code> <em>before</em> asking to be paid.</li>
+    <li>Facility, date window and who claimed it are checked against the original order. Any mismatch → no payment, refund path stays open.</li>
+    <li><strong>Why not just pay per API call (x402)?</strong> Because here the product may legitimately never arrive. Pay-per-response can't express “pay only if you succeed by Friday.” Escrow can. That's the gap PactAI fills in Circle's agent stack.</li>
+  </ul>
+  <p class="plain">In plain words: the hunter shows a <b>numbered receipt</b>, the buyer
+  <b>phones the shop</b> to confirm the receipt is real, and only then does the glass box open.</p>
 </section>
 
-<!-- 6 · Stack -->
+<!-- 7 · Decision logic -->
+<section class="slide">
+  <div class="kicker">Agents that decide, not scripts that loop</div>
+  <h2>Every decision hangs on a <em>real</em> signal</h2>
+  <div class="cards">
+    <div class="card"><h3>The slot itself</h3><p>An appointment appearing at a real facility is external and unpredictable — quote it? fund it? give up? re-hire? Every branch of agent logic keys off this signal.</p></div>
+    <div class="card"><h3>Budget caps</h3><p>The requester clamps every job to <span class="tag">BUDGET_CAP_USDC</span>; every spend-side tool passes a <span class="tag">canUseTool</span> approval gate before USDC moves.</p></div>
+    <div class="card"><h3>Reputation feedback</h3><p>Wins and misses land in a public ledger that re-weights the next hiring decision. Hunters literally live off their hit rate.</p></div>
+    <div class="card"><h3>Deadline arbiter</h3><p>The chain clock, not a party, decides timeouts: after the deadline <em>anyone</em> can trigger the refund. No hostage situations.</p></div>
+  </div>
+  <p class="plain">In plain words: the agents behave like a <b>careful buyer and an ambitious
+  contractor</b> — comparing offers, checking references, respecting a budget — not like cron jobs.</p>
+</section>
+
+<!-- 8 · Stack -->
 <section class="slide">
   <div class="kicker">Built with</div>
   <h2>Arc + Circle Agent Stack, used where each is honest</h2>
@@ -195,9 +244,11 @@
       </ul>
     </div>
   </div>
+  <p class="plain">In plain words: the money rail is <b>one stable currency for everything</b> —
+  the fee, the fuel, the refund — so neither grandma nor the bot ever thinks about “gas tokens”.</p>
 </section>
 
-<!-- 7 · Status -->
+<!-- 9 · Status -->
 <section class="slide">
   <div class="kicker">Where we are</div>
   <h2>The full cycle already runs — end to end, both endings</h2>
@@ -210,14 +261,16 @@
   <p class="status-line">Next up: <b>JobEscrow on Arc Testnet</b> → per-agent Circle Wallets → nanopayment quote step → recorded live demo.</p>
 </section>
 
-<!-- 8 · Close -->
+<!-- 10 · Close -->
 <section class="slide">
   <div class="kicker">Build on Arc · final on Aug 9</div>
-  <h2>The agentic economy needs a way to pay for outcomes.<br>PactAI is that primitive.</h2>
-  <ul class="points" style="margin-top:1rem">
+  <p class="punch">Today it's a doctor's appointment.<br>
+  Tomorrow it's any job one machine can do for another —<br>
+  <em>paid only when it's done.</em></p>
+  <ul class="points" style="margin-top:2rem">
+    <li>Same escrow, same oracle pattern, any async work: datasets, code review, content, monitoring.</li>
     <li>Repo: <a href="https://github.com/Kajko25/pactai">github.com/Kajko25/pactai</a></li>
-    <li>Demo task generalizes: any “work that takes time” — datasets, code review, content — same escrow, same oracle pattern.</li>
-    <li class="dim">Deck updates live at this link until the final checkpoint.</li>
+    <li class="dim">Deck updates live at this link until the final checkpoint. The queue-refreshing ends here.</li>
   </ul>
 </section>
 
