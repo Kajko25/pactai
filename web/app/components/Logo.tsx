@@ -44,11 +44,11 @@ export function LogoMark({ size = 24, animated = false }: { size?: number; anima
   );
 }
 
-export function Logo({ size = 24 }: { size?: number }) {
+export function Logo({ size = 28 }: { size?: number }) {
   return (
-    <span className="flex items-center gap-2">
+    <span className="flex items-center gap-2.5">
       <LogoMark size={size} animated />
-      <span className="font-bold tracking-tight">PactAI</span>
+      <span className="text-lg font-bold tracking-tight">PactAI</span>
     </span>
   );
 }
