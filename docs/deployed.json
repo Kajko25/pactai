@@ -33,5 +33,26 @@
       "notes": "PactAI's reputation signal, deliberately different from DAO-WARDEN's ValidationRegistry: no independent validator, recordOutcome(jobId) is permissionless and reads JobEscrow's own terminal state (Released/Refunded) directly."
     }
   },
+  "agents": {
+    "executor": {
+      "wallet": "0xA3A23dc97FCecBD8403732E7c2b3c237CE604829",
+      "agentId": 1,
+      "registerTx": "0x117c1de023a479eda14ff9cf1070d92de8bc521417695036cf6c7e2a49537c63"
+    },
+    "requester": {
+      "wallet": "0x03d1c300232c379845c1e345c4a49e607e87734e",
+      "agentId": 2,
+      "registerTx": "0x78911163de542940b38fa0e8a338f702f8a00746115dbea6f449d111f007c8ce",
+      "note": "Circle Agent Wallet -- registered via `circle wallet execute`, not a locally-signed tx."
+    }
+  },
+  "reputationRecords": {
+    "notes": "recordOutcome called on the 3 jobs funded during earlier smoke testing (2 Released, 1 Refunded on timeout). getSummary(1) == 3 total, 2 released, 66% release rate.",
+    "jobs": [
+      {"jobId": "0x599ea1c77e142f90d2b6c6e656c1a403ffa99be75d70b5fabeaf3040136158af", "outcome": "Released", "recordTx": "0x1979834ea2dd3f576b05f3b3c7b493e86f80245190bd69870bcd7ef6c94946f8"},
+      {"jobId": "0x19c9d18d5b3b17894ff2bcdf85ca288d730fc4cce64b6782ad1ba6adff8d7a69", "outcome": "Released", "recordTx": "0xcb13589c43325bb4aabfe5de282593f6bc714377087146f76fec205d9bc19196"},
+      {"jobId": "0x07216ba70fdc1f60087bfcc8b162f38d53f645e970637faadb6e8a49c415865e", "outcome": "Refunded", "recordTx": "0xce0d27306cda9536ed5e472ac389d4c5c964b455d169e359161efcd574bfbc66"}
+    ]
+  },
   "notes": "USDC address is the 6-decimal ERC-20 view of Arc's native gas USDC. Verified post-deploy with cast: code present, usdc() == 0x3600...0000. Source code verified on arcscan (Blockscout) 2026-07-21 — readable source + ABI at the explorer link."
 }

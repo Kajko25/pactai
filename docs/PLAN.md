@@ -66,9 +66,15 @@ All deadlines AoE (UTC-12). Submit early — late finals aren't judged.
       and reads JobEscrow's own terminal state (Released/Refunded) directly,
       since that state is already final and there's nothing to game. 13/13
       new Foundry tests. See docs/deployed.json for addresses/tx hashes.
-- [ ] Register the requester and executor agents (AgentCard + `register()`)
-      and call `recordOutcome` against the already-completed Arc jobs from
-      the smoke-test cycle
+- [x] Registered both agents on Arc Testnet (2026-07-26): executor
+      agentId **1** (`0xA3A23dc9...604829`, self-registered directly),
+      requester agentId **2** (`0x03d1c300...87734e`, registered via
+      `circle wallet execute` since it's a Circle Agent Wallet). AgentCards
+      are inline `data:application/json;base64,...` URIs (no IPFS infra
+      here). Called `recordOutcome` on the 3 completed jobs found from the
+      smoke-test cycle (2 Released, 1 Refunded) -- first real reputation
+      entries: `getSummary(1)` reads **3 total jobs, 2 released, 66%
+      release rate**, independently verified with `cast`.
 - [ ] Reputation ledger feeding back into requester's quote scoring
 - [ ] Full end-to-end dry run: post job → quote → fund → deliver → verify →
       release, on Arc Testnet, recorded
