@@ -46,6 +46,7 @@ code, and it's exactly the case pay-per-response (x402) cannot cover.
 | `services/job-board` | Minimal shared API both agents call to post/discover jobs and job state (open → quoted → funded → delivered → released/refunded). |
 | `services/slot-source` | Mock appointment-slot source ("the agency website") — the external signal hunters poll, and the oracle deliveries are verified against. Replaced by a real scraper/booking API in production. |
 | `packages/shared` | Job/quote/reputation/slot types, canonical-JSON claim hashing, and the viem escrow client shared by both agents. |
+| `web` | Next.js dapp: landing page, wallet-connected dashboard (your identity, reputation and jobs), and a read-only Activity explorer of every escrowed job on Arc. |
 
 ## Stack
 

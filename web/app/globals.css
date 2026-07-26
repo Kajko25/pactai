@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+/* Palette is inherited from docs/deck.html so the site and the pitch deck read
+   as one project. Dark-only on purpose: it is a testnet dapp, not a doc site. */
+:root {
+  --bg: #0b0e14;
+  --panel: #131824;
+  --panel-2: #0f1420;
+  --text: #e8ecf4;
+  --muted: #93a0b4;
+  --accent: #4d9fff; /* USDC-adjacent blue */
+  --mint: #3ddc97; /* release / success */
+  --amber: #ffb454; /* escrow / pending */
+  --red: #ff6b6b; /* refund path */
+  --border: #26304a;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-panel2: var(--panel-2);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-mint: var(--mint);
+  --color-amber: var(--amber);
+  --color-danger: var(--red);
+  --color-hairline: var(--border);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* RainbowKit's modal ships its own light/dark vars; align its accent with ours. */
+[data-rk] {
+  --rk-colors-accentColor: var(--accent);
+  --rk-radii-connectButton: 10px;
+}

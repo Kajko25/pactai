@@ -75,6 +75,17 @@ All deadlines AoE (UTC-12). Submit early — late finals aren't judged.
       smoke-test cycle (2 Released, 1 Refunded) -- first real reputation
       entries: `getSummary(1)` reads **3 total jobs, 2 released, 66%
       release rate**, independently verified with `cast`.
+- [x] Web dapp phases 1–3 (2026-07-26), in `web/`: landing page + FAQ,
+      wallet connect (RainbowKit, injected-only, Arc defined as a custom
+      chain) with an identity/reputation/own-jobs dashboard, and a read-only
+      Activity explorer. Job history is read from the Arcscan API in a
+      server component (Arc caps `eth_getLogs` at 10k blocks, so a browser
+      walk from the deploy block would be ~80 requests) and decoded with our
+      own ABIs; per-wallet state comes straight from the RPC.
+- [ ] Web dapp phase 4: requester flow in the browser (approve → fund →
+      track → release/refund), including a legible rendering of the proof a
+      human is releasing against — not a raw `bytes32`
+- [ ] Web dapp phase 5: executor flow (browse job board → claim → submit)
 - [ ] Reputation ledger feeding back into requester's quote scoring
 - [ ] Full end-to-end dry run: post job → quote → fund → deliver → verify →
       release, on Arc Testnet, recorded
