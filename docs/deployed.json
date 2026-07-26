@@ -13,6 +13,24 @@
         "usdcAddress": "0x3600000000000000000000000000000000000000"
       },
       "sourceVerified": true
+    },
+    "IdentityRegistry": {
+      "address": "0x9bAb9a3dc64A7D449728dC5C6F5cc47Af337C1e7",
+      "deployTx": "0xbf1c885381231e3f5eeb86871550e8983845c306bef699294c683ef4683823d8",
+      "block": 53775606,
+      "deployer": "0x6D4843155412832dC3Fa9C59e593cdAfdf52639D",
+      "notes": "ERC-8004 subset (ERC-721+URIStorage), same mechanism as DAO-WARDEN's reference impl but a fresh, separate deploy for PactAI. Adds agentIdOf(wallet) reverse lookup, not present in DAO-WARDEN's version."
+    },
+    "JobReputationRegistry": {
+      "address": "0x992aA6B918Cf7916fE1F8e43cB3E0FEb6915A835",
+      "deployTx": "0x87c5d72c0e461fbbd4cec6b1491dc0db72859eadfa857012798abddd2e8be24e",
+      "block": 53775608,
+      "deployer": "0x6D4843155412832dC3Fa9C59e593cdAfdf52639D",
+      "constructorArgs": {
+        "jobEscrowAddress": "0x52a8c98d90f5a2feef6aa07ebd25197456b4e4e7",
+        "identityRegistryAddress": "0x9bAb9a3dc64A7D449728dC5C6F5cc47Af337C1e7"
+      },
+      "notes": "PactAI's reputation signal, deliberately different from DAO-WARDEN's ValidationRegistry: no independent validator, recordOutcome(jobId) is permissionless and reads JobEscrow's own terminal state (Released/Refunded) directly."
     }
   },
   "notes": "USDC address is the 6-decimal ERC-20 view of Arc's native gas USDC. Verified post-deploy with cast: code present, usdc() == 0x3600...0000. Source code verified on arcscan (Blockscout) 2026-07-21 — readable source + ABI at the explorer link."

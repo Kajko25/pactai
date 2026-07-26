@@ -57,6 +57,18 @@ All deadlines AoE (UTC-12). Submit early — late finals aren't judged.
       refund. Executor = local EOA (Circle provisions one testnet agent
       wallet per account; documented honestly). Gas is USDC natively on
       Arc — no separate Paymaster needed there.
+- [x] ERC-8004 identity + reputation deployed on Arc Testnet (2026-07-26):
+      `IdentityRegistry` (`0x9bAb9a3dc64A7D449728dC5C6F5cc47Af337C1e7`) — fresh
+      deploy, not shared with DAO-WARDEN's registry even though same wallet
+      cluster; `JobReputationRegistry`
+      (`0x992aA6B918Cf7916fE1F8e43cB3E0FEb6915A835`) — deliberately no
+      validator (unlike DAO-WARDEN): `recordOutcome(jobId)` is permissionless
+      and reads JobEscrow's own terminal state (Released/Refunded) directly,
+      since that state is already final and there's nothing to game. 13/13
+      new Foundry tests. See docs/deployed.json for addresses/tx hashes.
+- [ ] Register the requester and executor agents (AgentCard + `register()`)
+      and call `recordOutcome` against the already-completed Arc jobs from
+      the smoke-test cycle
 - [ ] Reputation ledger feeding back into requester's quote scoring
 - [ ] Full end-to-end dry run: post job → quote → fund → deliver → verify →
       release, on Arc Testnet, recorded
