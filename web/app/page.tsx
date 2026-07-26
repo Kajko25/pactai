@@ -97,8 +97,10 @@ export default async function LandingPage() {
 
         {/* Labels inside an SVG scale with the drawing, so on a narrow screen
             the diagram scrolls at a legible size rather than shrinking into
-            unreadable type. */}
-        <div className="mt-14 -mx-5 overflow-x-auto px-5">
+            unreadable type. `mx-auto` on the SVG centres it when it fits and
+            collapses to zero when it does not, which keeps that scroll intact
+            — centring via flex would clip the left edge instead. */}
+        <div className="mt-16 -mx-5 overflow-x-auto px-5 pb-2">
           <FlowDiagram />
         </div>
 

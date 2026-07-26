@@ -13,7 +13,7 @@ export function FlowDiagram() {
   return (
     <svg
       viewBox="0 0 640 210"
-      className="w-full min-w-[560px] max-w-2xl"
+      className="mx-auto block w-full min-w-[560px] max-w-4xl"
       role="img"
       aria-label="A USDC payment moves from the requester into the escrow, waits there, then continues to the executor — or returns to the requester when the deadline passes."
     >
