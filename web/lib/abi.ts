@@ -5,6 +5,32 @@
 export const jobEscrowAbi = [
   {
     type: "function",
+    name: "fund",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "jobId", type: "bytes32" },
+      { name: "executor", type: "address" },
+      { name: "amount", type: "uint256" },
+      { name: "deadline", type: "uint64" },
+    ],
+    outputs: [],
+  },
+  {
+    type: "function",
+    name: "release",
+    stateMutability: "nonpayable",
+    inputs: [{ name: "jobId", type: "bytes32" }],
+    outputs: [],
+  },
+  {
+    type: "function",
+    name: "refund",
+    stateMutability: "nonpayable",
+    inputs: [{ name: "jobId", type: "bytes32" }],
+    outputs: [],
+  },
+  {
+    type: "function",
     name: "getJob",
     stateMutability: "view",
     inputs: [{ name: "jobId", type: "bytes32" }],
@@ -167,6 +193,16 @@ export const reputationRegistryAbi = [
 ] as const;
 
 export const erc20Abi = [
+  {
+    type: "function",
+    name: "approve",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "spender", type: "address" },
+      { name: "amount", type: "uint256" },
+    ],
+    outputs: [{ name: "", type: "bool" }],
+  },
   {
     type: "function",
     name: "balanceOf",

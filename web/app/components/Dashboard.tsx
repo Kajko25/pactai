@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useBalance, useReadContract, useSwitchChain } from "wagmi";
 import { formatEther, type Address } from "viem";
@@ -13,7 +14,10 @@ import {
 } from "@/lib/deployments";
 import { EscrowState, formatUsdc, shortHash } from "@/lib/format";
 import type { ClientJob } from "@/lib/client-types";
+import { loadJobs, type LocalJob } from "@/lib/jobs";
 import { JobList } from "./JobList";
+import { CreateJobForm } from "./CreateJobForm";
+import { RequesterJobCard } from "./RequesterJobCard";
 import { Panel, Stat } from "./ui";
 
 export function Dashboard({ jobs, loadError }: { jobs: ClientJob[]; loadError?: string }) {
@@ -109,11 +113,22 @@ function ConnectedDashboard({
     query: { enabled: Boolean(registeredId) },
   });
 
+  // Jobs this browser funded. They are tracked straight from the chain rather
+  // than from the explorer snapshot, so a job you just funded is visible
+  // immediately instead of after the next revalidation.
+  const [localJobs, setLocalJobs] = useState<LocalJob[]>([]);
+  useEffect(() => setLocalJobs(loadJobs()), []);
+  const localIds = new Set(localJobs.map((j) => j.jobId.toLowerCase()));
+
   const mine = jobs.filter(
     (job) =>
       job.requester.toLowerCase() === address.toLowerCase() ||
       job.executor.toLowerCase() === address.toLowerCase(),
   );
+
+  // Totals cover every job this wallet touched; the read-only list below drops
+  // the ones that already have a live card of their own further up the page.
+  const otherJobs = mine.filter((job) => !localIds.has(job.jobId.toLowerCase()));
 
   const asRequester = mine.filter((j) => j.requester.toLowerCase() === address.toLowerCase());
   const asExecutor = mine.filter((j) => j.executor.toLowerCase() === address.toLowerCase());
@@ -234,6 +249,31 @@ function ConnectedDashboard({
         </Panel>
       </section>
 
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-lg font-bold">Hire an executor</h2>
+          <p className="mt-1 max-w-2xl text-sm text-muted">
+            Do by hand what the requester agent does on its own: lock the budget, watch for a
+            delivery, check the proof, then pay or take the money back.
+          </p>
+        </div>
+
+        <CreateJobForm onCreated={(job) => setLocalJobs((prev) => [job, ...prev])} />
+
+        {localJobs.length > 0 ? (
+          <div className="grid gap-3">
+            {localJobs.map((job) => (
+              <RequesterJobCard
+                key={job.jobId}
+                job={job}
+                viewer={address}
+                onForget={() => setLocalJobs(loadJobs())}
+              />
+            ))}
+          </div>
+        ) : null}
+      </section>
+
       <section>
         <h2 className="text-lg font-bold">Your jobs</h2>
         {loadError ? (
@@ -243,14 +283,16 @@ function ConnectedDashboard({
               above come straight from the chain and are unaffected.
             </p>
           </Panel>
-        ) : mine.length === 0 ? (
+        ) : otherJobs.length === 0 ? (
           <Panel className="mt-3">
             <p className="text-sm text-muted">
-              This wallet has not taken part in any escrowed job yet.
+              {localJobs.length > 0
+                ? "Nothing beyond the jobs you funded from this browser, above."
+                : "This wallet has not taken part in any escrowed job yet."}
             </p>
           </Panel>
         ) : (
-          <JobList jobs={mine} viewer={address} className="mt-3" />
+          <JobList jobs={otherJobs} viewer={address} className="mt-3" />
         )}
       </section>
     </div>

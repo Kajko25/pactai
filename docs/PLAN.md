@@ -82,9 +82,17 @@ All deadlines AoE (UTC-12). Submit early — late finals aren't judged.
       server component (Arc caps `eth_getLogs` at 10k blocks, so a browser
       walk from the deploy block would be ~80 requests) and decoded with our
       own ABIs; per-wallet state comes straight from the RPC.
-- [ ] Web dapp phase 4: requester flow in the browser (approve → fund →
-      track → release/refund), including a legible rendering of the proof a
-      human is releasing against — not a raw `bytes32`
+- [x] Web dapp phase 4 (2026-07-26): requester flow in the browser — post a
+      job (exact-amount approve → fund), track it against the chain, then
+      release or refund. The proof problem is solved the way the agent solves
+      it: the dashboard re-fetches the claim from the slot source, re-hashes
+      its canonical JSON and renders four plain checks (hash matches chain /
+      right facility / appointment early enough / captured by the executor we
+      hired) instead of a raw `bytes32`. Release is deliberately still
+      possible when the proof fails, but the button says so. Also: settled
+      jobs offer `recordOutcome`, and the slot source now sends CORS on its
+      read routes so a browser can verify. Hash and jobId derivation verified
+      byte-identical to `packages/shared`; `bun run e2e` still green.
 - [ ] Web dapp phase 5: executor flow (browse job board → claim → submit)
 - [ ] Reputation ledger feeding back into requester's quote scoring
 - [ ] Full end-to-end dry run: post job → quote → fund → deliver → verify →
