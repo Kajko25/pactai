@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { loadActivity } from "@/lib/activity";
-import { formatUsdc } from "@/lib/format";
 import { Panel, Stat } from "./components/ui";
+import { CountUp } from "./components/CountUp";
+import { FlowDiagram } from "./components/FlowDiagram";
 import { JOB_ESCROW, addressUrl } from "@/lib/deployments";
 
 // Numbers on the landing page are read from Arc at request time, not typed in.
@@ -65,7 +66,7 @@ export default async function LandingPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-5">
-      <section className="py-20 sm:py-28">
+      <section className="hero-glow relative py-20 sm:py-28">
         <p className="font-mono text-xs uppercase tracking-widest text-muted">
           Arc Testnet · Agentic Economy
         </p>
@@ -94,7 +95,14 @@ export default async function LandingPage() {
           </Link>
         </div>
 
-        <p className="mt-4 text-xs text-muted">
+        {/* Labels inside an SVG scale with the drawing, so on a narrow screen
+            the diagram scrolls at a legible size rather than shrinking into
+            unreadable type. */}
+        <div className="mt-14 -mx-5 overflow-x-auto px-5">
+          <FlowDiagram />
+        </div>
+
+        <p className="mt-10 text-xs text-muted">
           Testnet only · escrow contract{" "}
           <a
             className="font-mono text-accent hover:underline"
@@ -109,21 +117,31 @@ export default async function LandingPage() {
 
       {hasNumbers ? (
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Stat value={activity.totals.jobs} label="Jobs escrowed" hint="on Arc Testnet" />
           <Stat
-            value={activity.totals.released}
+            value={<CountUp value={activity.totals.jobs} />}
+            label="Jobs escrowed"
+            hint="on Arc Testnet"
+          />
+          <Stat
+            value={<CountUp value={activity.totals.released} />}
             label="Released to executor"
             hint="proof verified"
             tone="mint"
           />
           <Stat
-            value={activity.totals.refunded}
+            value={<CountUp value={activity.totals.refunded} />}
             label="Refunded"
             hint="deadline passed, funds returned"
             tone="amber"
           />
           <Stat
-            value={`${formatUsdc(activity.totals.usdcSettled)} USDC`}
+            value={
+              <CountUp
+                value={Number(activity.totals.usdcSettled) / 1e6}
+                decimals={2}
+                suffix=" USDC"
+              />
+            }
             label="Settled through escrow"
             hint="live from the chain"
           />
@@ -137,7 +155,7 @@ export default async function LandingPage() {
         </p>
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           {STEPS.map((step) => (
-            <Panel key={step.n}>
+            <Panel key={step.n} className="lift">
               <div className={`font-mono text-sm ${step.tone}`}>step {step.n}</div>
               <h3 className="mt-2 text-lg font-bold">{step.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted">{step.body}</p>
@@ -173,7 +191,7 @@ export default async function LandingPage() {
           {FAQ.map((item) => (
             <details
               key={item.q}
-              className="group rounded-xl border border-hairline bg-panel px-5 py-4"
+              className="lift group rounded-xl border border-hairline bg-panel px-5 py-4"
             >
               <summary className="cursor-pointer list-none font-semibold marker:hidden">
                 <span className="mr-2 text-accent group-open:hidden">+</span>

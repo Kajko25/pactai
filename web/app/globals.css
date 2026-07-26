@@ -46,3 +46,163 @@ body {
   --rk-colors-accentColor: var(--accent);
   --rk-radii-connectButton: 10px;
 }
+
+/* ---------------------------------------------------------------------------
+   Motion.
+   Every animation here is decoration over content that is already correct and
+   readable without it, which is what makes the reduced-motion block at the
+   bottom a real switch rather than a degraded experience.
+   --------------------------------------------------------------------------- */
+
+.flow-label {
+  font-size: 11px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.04em;
+}
+
+.flow-node-label {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* The payment: out of the requester, held at the escrow, on to the executor.
+   The pause in the middle is the point — value sitting still, in public. */
+@keyframes pact-flow {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  32% {
+    offset-distance: 50%;
+  }
+  56% {
+    offset-distance: 50%;
+  }
+  94% {
+    offset-distance: 100%;
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+.flow-dot {
+  offset-path: path("M 80 105 H 560");
+  offset-rotate: 0deg;
+  animation: pact-flow 7s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--mint) 60%, transparent));
+}
+
+/* The other outcome, on a longer cycle so it reads as the exception it is. */
+@keyframes pact-refund {
+  0%,
+  55% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+  92% {
+    offset-distance: 100%;
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+.flow-dot-refund {
+  offset-path: path("M 320 105 C 320 30, 90 30, 80 105");
+  offset-rotate: 0deg;
+  animation: pact-refund 21s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--red) 60%, transparent));
+}
+
+/* The escrow breathes while it is holding something. */
+@keyframes pact-hold {
+  0%,
+  100% {
+    stroke-opacity: 0.55;
+  }
+  45% {
+    stroke-opacity: 1;
+  }
+}
+
+.escrow-ring {
+  animation: pact-hold 7s ease-in-out infinite;
+}
+
+@keyframes logo-ring {
+  0%,
+  100% {
+    stroke-opacity: 0.5;
+  }
+  50% {
+    stroke-opacity: 1;
+  }
+}
+
+.logo-ring {
+  animation: logo-ring 4s ease-in-out infinite;
+}
+
+/* Cards lift toward the pointer — the only hover affordance on the page. */
+.lift {
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.lift:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  box-shadow: 0 8px 24px -12px rgb(0 0 0 / 0.6);
+}
+
+/* A slow wash behind the hero, so the fold is not flat black. */
+.hero-glow::before {
+  content: "";
+  position: absolute;
+  inset: -20% -10% auto -10%;
+  height: 420px;
+  z-index: -1;
+  background: radial-gradient(
+    60% 60% at 30% 0%,
+    color-mix(in srgb, var(--accent) 16%, transparent) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-dot,
+  .flow-dot-refund,
+  .escrow-ring,
+  .logo-ring {
+    animation: none;
+  }
+  /* Without motion the dot must still say where the money is: parked in the
+     escrow, which is the state the diagram is about. */
+  .flow-dot {
+    offset-distance: 50%;
+    opacity: 1;
+  }
+  .flow-dot-refund {
+    opacity: 0;
+  }
+  .lift {
+    transition: none;
+  }
+  .lift:hover {
+    transform: none;
+  }
+}

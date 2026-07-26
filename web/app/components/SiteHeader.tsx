@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { Logo } from "./Logo";
 
 const NAV = [
   { href: "/", label: "Home" },
@@ -16,9 +17,8 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-hairline bg-bg/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center gap-6 px-5 py-3">
-        <Link href="/" className="flex items-center gap-2 font-bold tracking-tight">
-          <span className="inline-block h-2.5 w-2.5 rounded-full bg-mint" />
-          PactAI
+        <Link href="/" aria-label="PactAI home">
+          <Logo />
         </Link>
 
         <nav className="flex gap-1 text-sm">

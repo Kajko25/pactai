@@ -32,7 +32,7 @@ export function Stat({
   }[tone];
 
   return (
-    <Panel>
+    <Panel className="lift">
       <div className={`text-2xl font-extrabold ${toneClass}`}>{value}</div>
       <div className="mt-1 text-sm text-ink">{label}</div>
       {hint ? <div className="mt-1 text-xs text-muted">{hint}</div> : null}
