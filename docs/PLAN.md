@@ -107,6 +107,11 @@ All deadlines AoE (UTC-12). Submit early — late finals aren't judged.
 - [ ] Reputation ledger feeding back into requester's quote scoring
 - [ ] Full end-to-end dry run: post job → quote → fund → deliver → verify →
       release, on Arc Testnet, recorded
+- [x] Web dapp deployed (2026-07-26): **https://pactai-nine.vercel.app**,
+      Vercel project `kajko25s-projects/pactai`, built from `web/` with no env
+      vars. Landing and explorer are fully functional in public (they read
+      Arc and the Arcscan API); the flows that need the local slot source or
+      job board take a URL in the UI, so a demo machine can serve them.
 - [ ] Record 3-minute video pitch + demo
 - [ ] Build submission deck
 - [ ] Submit final checkpoint (repo, MVP, video, deck) — early, before the

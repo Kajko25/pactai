@@ -6,6 +6,11 @@ human in the loop.
 
 Built for **Build on Arc** (Agentic Economy track).
 
+- **Live dapp:** https://pactai-nine.vercel.app — landing, a read-only explorer
+  of every job the escrow has settled on Arc Testnet, and a wallet-connected
+  dashboard where a human can stand in for either agent.
+- **Deck:** https://kajko25.github.io/pactai/deck.html
+
 ## Why this exists
 
 Circle's Agent Stack already gives an agent a wallet and a way to pay

@@ -101,6 +101,12 @@ does not know Arc, an add).
 
 ## Deploying
 
-Vercel: set the project root to `web/`, framework Next.js, no env vars needed.
-Pages revalidate every 30–60s, so the deployed site keeps up with the chain
-without a rebuild.
+Live at **https://pactai-nine.vercel.app** (Vercel project
+`kajko25s-projects/pactai`, deployed from this directory — `vercel deploy
+--prod` with `web/` as the cwd, no env vars set). Pages revalidate every
+30–60s, so the deployed site keeps up with the chain without a rebuild.
+
+The deployed dashboard reads the chain and the explorer directly, so the
+landing page and the explorer are fully functional in public. The parts that
+need the local services — verifying a delivered claim, hunting slots — accept a
+URL in the UI, so a demo machine running `bun run slot-source` can serve them.
