@@ -5,8 +5,9 @@
 // requests per page load. The explorer (Blockscout) already indexes every log,
 // so history comes from its API and only per-job current state is read from
 // the chain. Decoding is done here with our own ABIs rather than trusting the
-// explorer's `decoded` field, which is empty for contracts whose source has
-// not been verified.
+// explorer's `decoded` field: all three contracts are source-verified today,
+// but that is a property of the explorer's database, not of the chain, and a
+// dashboard that reads money should not go blind if it lapses.
 import { decodeEventLog, type Address, type Hex } from "viem";
 import { EXPLORER_URL, IDENTITY_REGISTRY, JOB_ESCROW, REPUTATION_REGISTRY } from "./deployments";
 import { identityRegistryAbi, jobEscrowAbi, reputationRegistryAbi } from "./abi";

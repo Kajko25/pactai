@@ -39,8 +39,10 @@ hundreds of thousands of blocks, so walking the chain from the browser would be
 ~80 requests per page load. History therefore comes from the Arcscan
 (Blockscout) API in a server component, and only per-wallet state (balances,
 `agentIdOf`, `getSummary`) is read from the RPC. Logs are decoded here with the
-ABIs in `lib/abi.ts` rather than trusting the explorer's own decoding, which is
-empty for contracts whose source was never verified.
+ABIs in `lib/abi.ts` rather than trusting the explorer's own decoding: all three
+contracts are source-verified, but that is a fact about the explorer's database
+rather than about the chain, and a dashboard that reports on money should not go
+blind if it lapses.
 
 ## Verifying a delivered result
 
