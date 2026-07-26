@@ -21,12 +21,14 @@ const claims = new Map<string, SlotClaim>(); // claimId -> claim
 
 const app = new Hono();
 
-// The read side of the oracle is public by design — "anyone can re-fetch a
-// claim by id" is the whole point, and the web dashboard re-verifies a
-// delivered result in the browser before a human clicks Release. Only the
-// read routes are opened up; claiming and the admin spawn hook stay
-// same-origin.
+// Everything a real agency website would expose to a browser is open here:
+// listing slots, racing to claim one, and re-fetching a claim by id. The web
+// dashboard uses all three — an executor hunts and claims from the browser,
+// and a requester re-verifies the resulting claim before releasing payment.
+// Only /admin/spawn stays same-origin: forcing a slot into existence is the
+// demo harness pretending to be the world, not part of the public surface.
 app.use("/slots", cors());
+app.use("/slots/*", cors());
 app.use("/claims/*", cors());
 
 function now(): number {

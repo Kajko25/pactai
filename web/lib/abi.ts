@@ -17,6 +17,16 @@ export const jobEscrowAbi = [
   },
   {
     type: "function",
+    name: "submitResult",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "jobId", type: "bytes32" },
+      { name: "resultHash", type: "bytes32" },
+    ],
+    outputs: [],
+  },
+  {
+    type: "function",
     name: "release",
     stateMutability: "nonpayable",
     inputs: [{ name: "jobId", type: "bytes32" }],

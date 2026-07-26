@@ -18,6 +18,7 @@ import { loadJobs, type LocalJob } from "@/lib/jobs";
 import { JobList } from "./JobList";
 import { CreateJobForm } from "./CreateJobForm";
 import { RequesterJobCard } from "./RequesterJobCard";
+import { ExecutorJobCard, type ExecutorAssignment } from "./ExecutorJobCard";
 import { Panel, Stat } from "./ui";
 
 export function Dashboard({ jobs, loadError }: { jobs: ClientJob[]; loadError?: string }) {
@@ -126,9 +127,35 @@ function ConnectedDashboard({
       job.executor.toLowerCase() === address.toLowerCase(),
   );
 
+  // Jobs someone funded naming this wallet as the executor. The explorer
+  // snapshot is the general source; the local store is merged in so a job
+  // funded seconds ago in this same browser is workable immediately, and
+  // brings its terms with it.
+  const assignments: ExecutorAssignment[] = [];
+  const seenAssignments = new Set<string>();
+  for (const job of localJobs) {
+    if (job.executor.toLowerCase() !== address.toLowerCase()) continue;
+    seenAssignments.add(job.jobId.toLowerCase());
+    assignments.push({
+      jobId: job.jobId,
+      facility: job.facility,
+      notAfter: job.notAfter,
+      boardId: job.boardId,
+    });
+  }
+  for (const job of jobs) {
+    if (job.executor.toLowerCase() !== address.toLowerCase()) continue;
+    if (seenAssignments.has(job.jobId.toLowerCase())) continue;
+    seenAssignments.add(job.jobId.toLowerCase());
+    assignments.push({ jobId: job.jobId });
+  }
+
   // Totals cover every job this wallet touched; the read-only list below drops
   // the ones that already have a live card of their own further up the page.
-  const otherJobs = mine.filter((job) => !localIds.has(job.jobId.toLowerCase()));
+  const otherJobs = mine.filter(
+    (job) =>
+      !localIds.has(job.jobId.toLowerCase()) && !seenAssignments.has(job.jobId.toLowerCase()),
+  );
 
   const asRequester = mine.filter((j) => j.requester.toLowerCase() === address.toLowerCase());
   const asExecutor = mine.filter((j) => j.executor.toLowerCase() === address.toLowerCase());
@@ -272,6 +299,32 @@ function ConnectedDashboard({
             ))}
           </div>
         ) : null}
+      </section>
+
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-lg font-bold">Work assigned to you</h2>
+          <p className="mt-1 max-w-2xl text-sm text-muted">
+            The executor side: hunt the slot, race to claim it, and commit its hash to the escrow.
+            Jobs appear here when someone funds one naming this wallet.
+          </p>
+        </div>
+
+        {assignments.length === 0 ? (
+          <Panel>
+            <p className="text-sm text-muted">
+              Nobody has hired this wallet yet. To try both sides at once, post a job above with
+              your own address as the executor — the escrow allows it, and it is the quickest way
+              to see the full cycle.
+            </p>
+          </Panel>
+        ) : (
+          <div className="grid gap-3">
+            {assignments.map((assignment) => (
+              <ExecutorJobCard key={assignment.jobId} assignment={assignment} viewer={address} />
+            ))}
+          </div>
+        )}
       </section>
 
       <section>

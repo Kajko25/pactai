@@ -5,7 +5,7 @@ Next.js (App Router) dapp for the PactAI escrow on Arc Testnet.
 | Route | What it is |
 |---|---|
 | `/` | Landing page: what PactAI does, the three-step "glass box", FAQ. The stat strip is read from Arc at request time, not hardcoded. |
-| `/app` | Wallet-connected dashboard: USDC balances, ERC-8004 identity, reputation summary, the full requester flow (post → approve → fund → verify → release/refund), and every job this wallet took part in. |
+| `/app` | Wallet-connected dashboard: USDC balances, ERC-8004 identity, reputation summary, the requester flow (post → approve → fund → verify → release/refund), the executor flow (hunt → claim → submit), and every job this wallet took part in. |
 | `/activity` | Read-only explorer: totals, registered agents with their reputation, and each job's full on-chain timeline. No wallet needed. |
 
 ## Running it
@@ -23,7 +23,11 @@ contract addresses are defaults. Two optional overrides:
 NEXT_PUBLIC_ARC_RPC_URL=https://rpc.blockdaemon.testnet.arc.network
 NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=...   # adds WalletConnect to the wallet list
 NEXT_PUBLIC_SLOT_SOURCE_URL=http://localhost:4100   # oracle used to verify a delivered claim
+NEXT_PUBLIC_JOB_BOARD_URL=http://localhost:4000     # optional: load a job's terms, post a result
 ```
+
+Both service URLs are editable in the UI, so a deployed dashboard can still be
+pointed at services running on the demo machine.
 
 The public Arc RPC rate-limits aggressively; the Blockdaemon mirror above is
 what the `smoke:arc` script uses when it needs headroom.
@@ -61,6 +65,30 @@ escrow, the funds, and the release/refund rights remain addressable by job id.
 Release stays possible when verification fails — the button relabels itself
 rather than disappearing. A UI that silently blocks the action would be lying
 about who holds the arbiter role: on-chain, the requester does.
+
+## Working as the executor
+
+A job becomes work when the escrow says so: the dashboard lists jobs funded
+with this wallet as the executor, read from the chain rather than from the job
+board, so the assignment survives the board being down or never used.
+
+What the chain does *not* carry is the task. Facility and appointment cutoff
+are the requester's terms and travel off-chain — load them from the board by
+job-board id, or type them in. Hunting the wrong facility produces a delivery
+that fails the requester's verification, which is the correct outcome, so the
+slot list marks which open slots would actually satisfy the job before you
+claim one.
+
+Claiming races: the slot source answers the second claimant with a 409, and the
+UI says another hunter got there first rather than pretending it succeeded.
+After a capture, `submitResult` commits `keccak256(canonicalJson(claim))` — the
+value the requester recomputes. Posting the result to the job board is
+best-effort and happens first; if the board is unreachable the on-chain
+commitment still goes through, because that is the one that delivers the job.
+
+To exercise both roles with a single wallet, post a job with your own address
+as the executor. The escrow permits it and it is the fastest way to see the
+whole cycle.
 
 ## Wallets
 

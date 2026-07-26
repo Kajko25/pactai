@@ -93,7 +93,17 @@ All deadlines AoE (UTC-12). Submit early — late finals aren't judged.
       jobs offer `recordOutcome`, and the slot source now sends CORS on its
       read routes so a browser can verify. Hash and jobId derivation verified
       byte-identical to `packages/shared`; `bun run e2e` still green.
-- [ ] Web dapp phase 5: executor flow (browse job board → claim → submit)
+- [x] Web dapp phase 5 (2026-07-26): executor flow in the browser — a job
+      appears as work when someone funds it naming your wallet (read from the
+      chain, not from the board), then hunt the facility, race to claim a
+      slot, and commit `keccak256(canonicalJson(claim))` via `submitResult`.
+      The requester's terms are loaded from the job board by board id when
+      available and typed in otherwise, because the escrow deliberately does
+      not carry them. Both services now send CORS (the board everywhere, the
+      slot source on everything except the `/admin/spawn` harness hook).
+      Verified with browser-origin requests end to end: hunt → claim → hash →
+      the phase-4 panel's verdict, plus the 409 race and a wrong-facility
+      delivery being rejected. `bun run e2e` still green.
 - [ ] Reputation ledger feeding back into requester's quote scoring
 - [ ] Full end-to-end dry run: post job → quote → fund → deliver → verify →
       release, on Arc Testnet, recorded

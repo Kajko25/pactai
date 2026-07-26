@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import {
   JobSchema,
   QuoteSchema,
@@ -22,6 +23,13 @@ const results = new Map<string, JobResult>(); // jobId -> result
 const reputation: ReputationEntry[] = [];
 
 const app = new Hono();
+
+// The board is a shared coordination surface with no auth of its own — an
+// agent and a human at the web dashboard are the same kind of participant to
+// it, so browser origins are allowed everywhere rather than on a curated
+// subset. Adding real authorization is the same task as making it survive a
+// restart; both are listed in docs/PLAN.md.
+app.use("*", cors());
 
 app.post("/jobs", async (c) => {
   const parsed = JobSchema.safeParse(await c.req.json());
