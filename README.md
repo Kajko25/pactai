@@ -56,8 +56,12 @@ code, and it's exactly the case pay-per-response (x402) cannot cover.
 ## Stack
 
 - Arc Testnet (USDC-denominated gas, sub-second settlement)
-- Circle Agent Stack: Agent Wallets (Smart Contract Accounts), Circle CLI,
-  Gateway Nanopayments, Circle Agent Marketplace patterns
+- Circle Agent Stack, in use today: Agent Wallets (Smart Contract Accounts)
+  driven through the Circle CLI — the requester agent spends from one, and that
+  same wallet holds its own ERC-8004 identity on Arc. **Not wired up yet:**
+  Gateway Nanopayments and the Agents Marketplace, which are the natural fit
+  for paid quote discovery — the public Marketplace listing is item 1 on the
+  cut list in `docs/PLAN.md`
 - USDC-only economics: on Arc, gas **is** USDC — the agent wallet pays fees
   from the same balance it escrows, so no separate gas token or Paymaster
   is needed (the executor runs as a lightweight local EOA; Circle
@@ -65,7 +69,8 @@ code, and it's exactly the case pay-per-response (x402) cannot cover.
 - Claude Agent SDK for both agents (`canUseTool` gates every spend action —
   same human-in-the-loop safety pattern as Circle's own starter kit; we widen
   the gate to autonomous-by-default once the demo is trusted)
-- Solidity escrow contract + Circle Contracts for deployment
+- Solidity contracts built and deployed with Foundry (`forge script`), then
+  source-verified on arcscan — not through Circle's Smart Contract Platform
 - Bun workspaces, TypeScript
 
 ## Local development
