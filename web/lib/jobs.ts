@@ -25,6 +25,11 @@ export type LocalJob = {
   deadline: number;
   createdAt: number;
   fundTxHash?: Hex;
+  /** The release or refund that ended this job. Recorded when the browser sends
+   *  it, so the receipt can link the settlement and not just the funding. A job
+   *  settled from a different browser (or by `cast`) simply has no hash here —
+   *  the receipt says so rather than implying nothing happened. */
+  settleTxHash?: Hex;
 };
 
 /** Job-board ids are UUIDs; the on-chain jobId is their keccak256 — same
@@ -57,6 +62,15 @@ export function loadJobs(): LocalJob[] {
 export function saveJob(job: LocalJob): void {
   const jobs = loadJobs().filter((j) => j.jobId !== job.jobId);
   jobs.unshift(job);
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(jobs));
+}
+
+/** Attach the settling transaction to a stored job, if we still have the job. */
+export function recordSettlement(jobId: Hex, hash: Hex): void {
+  const jobs = loadJobs();
+  const job = jobs.find((j) => j.jobId === jobId);
+  if (!job) return;
+  job.settleTxHash = hash;
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(jobs));
 }
 

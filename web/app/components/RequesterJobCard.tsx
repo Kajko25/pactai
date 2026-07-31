@@ -12,11 +12,12 @@ import {
   formatUsdc,
   shortHash,
 } from "@/lib/format";
-import { forgetJob, formatCountdown, taskSpec, type LocalJob } from "@/lib/jobs";
+import { forgetJob, formatCountdown, recordSettlement, taskSpec, type LocalJob } from "@/lib/jobs";
 import type { ProofVerdict } from "@/lib/claim";
 import { AddressLink, StateBadge, TxLink } from "./ui";
 import { TxAction } from "./TxAction";
 import { ProofPanel } from "./ProofPanel";
+import { SettlementReceipt } from "./SettlementReceipt";
 
 const ZERO_HASH = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
@@ -88,6 +89,13 @@ export function RequesterJobCard({
     void record.refetch();
   }
 
+  /** Release and refund are the transactions that end a job, so their hash is
+   *  what the receipt needs; the funding hash alone tells half the story. */
+  function onSettled(hash: Hex) {
+    recordSettlement(job.jobId, hash);
+    refresh();
+  }
+
   const send = (functionName: "release" | "refund") => (): Promise<Hex> =>
     writeContractAsync({
       abi: jobEscrowAbi,
@@ -147,7 +155,20 @@ export function RequesterJobCard({
         </p>
       ) : null}
 
-      {hasResult ? (
+      {settled ? (
+        <SettlementReceipt
+          job={job}
+          state={state}
+          amount={amount}
+          resultHash={hasResult ? (resultHash as Hex) : undefined}
+          verdict={verdict}
+          requester={onChain.data?.requester}
+          executorAgentId={executorAgentId.data}
+          outcomeRecorded={recorded}
+        />
+      ) : null}
+
+      {hasResult && !settled ? (
         <ProofPanel
           resultHash={resultHash as Hex}
           task={{ facility: job.facility, notAfter: job.notAfter }}
@@ -170,7 +191,7 @@ export function RequesterJobCard({
                   : "verify the claim above first — releasing is final"
             }
             send={send("release")}
-            onConfirmed={refresh}
+            onConfirmed={onSettled}
           />
         ) : null}
 
@@ -180,7 +201,7 @@ export function RequesterJobCard({
             tone="danger"
             hint="nothing delivered yet — take your USDC back now"
             send={send("refund")}
-            onConfirmed={refresh}
+            onConfirmed={onSettled}
           />
         ) : null}
 
@@ -191,7 +212,7 @@ export function RequesterJobCard({
             tone="danger"
             hint="past the deadline anyone can trigger this — you are not at the executor's mercy"
             send={send("refund")}
-            onConfirmed={refresh}
+            onConfirmed={onSettled}
           />
         ) : null}
 
